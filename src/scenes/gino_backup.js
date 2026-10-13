@@ -52,14 +52,14 @@ function preload(s) {
 
 }
 
-function crea_terreno   (s) {
+function crea_terreno(s) {
     terreno= PP.assets.image.add(s,img_terreno,
         LARGHEZZA/2, 
         Y_TERRENO + A_TERRENO/2, 
         LARGHEZZA, 
         A_TERRENO
     );
-    PP.physics.add(s,terreno, PP.physics.types.STATIC);
+    PP.physics.add(s, terreno, PP.physics.types.STATIC);
 }
 
 function crea_gino(s) {
