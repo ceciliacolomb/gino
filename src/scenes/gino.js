@@ -79,13 +79,10 @@ function crea_fungo(s) {
     PP.physics.add_overlap_f(s,gino,fungo,fine_partita);
 }
 
-function fine_partita(s,a,b) {
-    console.log("colpito");
-}
 
-function fine_partita(s,a,b) {
+function fine_partita(s, a, b) {
     partita_finita= true;
-    PP.physics.set_velocity_x(fungo,0);
+    PP.physics.set_velocity_x(b,0);
     testo_fine.visibility.hidden= false;
     testo_rigioca.visibility.hidden= false;
 }
@@ -120,11 +117,14 @@ function crea_fine(s) {
 }
 
 function ricomincia(s) {
-    partita_finita= false;
-    vel_fungo= VEL_INIZIALE;
-    resetta_fungo();
-    testo_fine.visibility.hidden= true;
-    testo_rigioca.visibility.hidden= true;
+    if (PP.interactive.kb.is_key_just_down(s, TASTO_SALTO)) {
+        partita_finita= false;
+        vel_fungo= VEL_INIZIALE;
+        resetta_fungo();
+        testo_fine.visibility.hidden= true;
+        testo_rigioca.visibility.hidden= true;
+    }
+}
 }
 
 function create(s) {
@@ -144,9 +144,9 @@ function salta(s) {
 }
 
 function controlla_fungo (){
-    if (fungo.geometry.body_x<-L_FUNGO/2){
+    if (fungo.geometry.body_x<-L_FUNGO){
         vel_fungo+= ACCELERAZIONE;
-        resetta_fungo(s);  
+        resetta_fungo();  
     }
 }
 
@@ -159,8 +159,8 @@ function spara(s) {
     if (PP.interactive.kb.is_key_just_down(s, TASTO_FUOCO) &&
         fuoco==null) {
         fuoco = PP.assets.image.add(s,img_fuoco,
-            gino.geometry.body_x + L_GINO/2 + R_FUOCO,
-            gino.geometry.body_y,
+            gino.geometry.body_x + L_GINO/2,
+            gino.geometry.body_y - 15 +L_GINO/4,
             0.5,
             0.5
         );
@@ -172,8 +172,8 @@ function spara(s) {
     }
 }
 
-function brucia(s,fuoco ,fungo ) {
-    PP.shapes.destroy(fuoco);
+function brucia(s,a,b) {
+    PP.assets.destroy(fuoco);
     fuoco= null;
     resetta_fungo(s);
 }
@@ -181,20 +181,19 @@ function brucia(s,fuoco ,fungo ) {
 
 function controlla_fuoco() {
     if (fuoco!==null && fuoco.geometry.body_x> LARGHEZZA) {
-        PP.shapes.destroy(fuoco);
+        PP.assets.destroy(fuoco);
         fuoco= null;
     }
 }
 
 function update(s) {
     if (parte_finita) {
-        if (PP.interactive.kb.is_key_just_down(s, TASTO_SALTO)) {
-            ricomincia(s);
-        }
+        if (PP.interactive.kb.is_key_just_down(s, TASTO_SALTO))
+            ricomincia(s)
         return;
     }
     salta(s);
-    controlla_fungo();
+    controlla_fungo();  
     controlla_fuoco();
     spara(s);
 }
